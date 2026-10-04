@@ -12,24 +12,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install tmate
+      - name: Test network
         run: |
-          sudo apt update
-          sudo apt install -y tmate
+          echo "=== Testing GitHub ==="
+          curl -I --max-time 10 https://github.com
+
+          echo "=== Testing tmate.io ==="
+          curl -I --max-time 10 https://tmate.io
+
+          echo "=== Resolving tmate.io ==="
+          getent hosts tmate.io
 
       - name: Start tmate
-        run: |
-          tmate -S /tmp/tmate.sock new-session -d
-          echo "Waiting for tmate..."
-
-          timeout 60 tmate -S /tmp/tmate.sock wait tmate-ready || {
-            echo "tmate failed to become ready"
-            tmate -S /tmp/tmate.sock show-messages
-            exit 1
-          }
-
-          echo "===== SSH CONNECTION ====="
-          tmate -S /tmp/tmate.sock display -p '#{tmate_ssh}'
-          echo "=========================="
-
-          sleep 18000
+        uses: mxschmitt/action-tmate@v3
+        timeout-minutes: 300
