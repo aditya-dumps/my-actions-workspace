@@ -1,12 +1,13 @@
 name: Ubuntu Workspace
 
 on:
-  push:
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 300
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -14,10 +15,6 @@ jobs:
       - name: Clean-up
         uses: rokibhasansagar/slimhub_actions@main
 
-      - name: Run custom commands
-        run: |
-          echo "Ready to run your commands!"
-          sudo apt update
-          sudo apt install tmate
-          tmate
-          tmate display -p '#{tmate_ssh}' && while true; do sleep 3600; done
+      - name: Start tmate
+        uses: mxschmitt/action-tmate@v3
+        timeout-minutes: 300
