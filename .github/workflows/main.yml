@@ -15,6 +15,55 @@ jobs:
       - name: Clean-up
         uses: rokibhasansagar/slimhub_actions@main
 
+      - name: Check Runner Resources
+        run: |
+          echo "============================================"
+          echo "           RUNNER INFORMATION"
+          echo "============================================"
+
+          echo
+          echo "===== RAM ====="
+          free -h
+
+          echo
+          echo "===== SWAP ====="
+          swapon --show || true
+
+          echo
+          echo "===== CPU ====="
+          nproc
+          lscpu | grep -E 'Model name|CPU\(s\)' || true
+
+          echo
+          echo "===== DISK ====="
+          df -h /
+
+          echo
+          echo "===== MEMORY INFO ====="
+          cat /proc/meminfo | head -25
+
+          echo
+          echo "===== UPTIME ====="
+          uptime
+
+          echo
+          echo "============================================"
+          echo "        END RUNNER INFORMATION"
+          echo "============================================"
+
+      - name: Check Kernel Memory Errors
+        run: |
+          echo "===== OOM / MEMORY ERRORS ====="
+          dmesg -T 2>/dev/null | grep -iE \
+            "oom|out of memory|killed process|memory cgroup" \
+            || echo "No OOM messages found."
+
+          echo
+          echo "===== KERNEL TERMINATION MESSAGES ====="
+          dmesg -T 2>/dev/null | grep -iE \
+            "killed|terminated|sigterm|signal" \
+            || echo "No termination messages found."
+
       - name: SSH Breakpoint
         uses: namespacelabs/breakpoint-action@v0
         with:
