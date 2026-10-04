@@ -12,6 +12,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Clean-up
+        uses: rokibhasansagar/slimhub_actions@main
+
       - name: SSH Breakpoint
         uses: namespacelabs/breakpoint-action@v0
         with:
