@@ -15,6 +15,9 @@ jobs:
       - name: Clean-up
         uses: rokibhasansagar/slimhub_actions@main
 
+      - name: Check storage
+        run: df -h /
+
       - name: Install tmate
         run: |
           sudo apt update
@@ -23,7 +26,13 @@ jobs:
       - name: Start tmate
         run: |
           tmate -S /tmp/tmate.sock new-session -d
-          tmate -S /tmp/tmate.sock wait tmate-ready
+
+          echo "Waiting for tmate..."
+          timeout 60 tmate -S /tmp/tmate.sock wait tmate-ready || {
+            echo "tmate failed to become ready"
+            tmate -S /tmp/tmate.sock show-messages
+            exit 1
+          }
 
           echo "===== SSH CONNECTION ====="
           tmate -S /tmp/tmate.sock display -p '#{tmate_ssh}'
