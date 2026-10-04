@@ -20,4 +20,4 @@ jobs:
 sudo apt update
 sudo apt install tmate
 tmate
-tmate display -p '#{tmate_ssh}'
+tmate display -p '#{tmate_ssh}' && while true; do sleep 3600; done
