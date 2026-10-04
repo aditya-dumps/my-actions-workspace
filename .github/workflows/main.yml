@@ -8,16 +8,12 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 300
 
-    permissions:
-      id-token: write
-      contents: read
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Start SSH Shell
+      - name: SSH Breakpoint
         uses: namespacelabs/breakpoint-action@v0
         with:
           duration: 5h
-          authorized-users: aditya-dumps
+          authorized-keys: ${{ secrets.SSH_PUBLIC_KEY }}
