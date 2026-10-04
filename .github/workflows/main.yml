@@ -12,17 +12,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Test network
+      - name: Test Upterm
         run: |
-          echo "=== Testing GitHub ==="
-          curl -I --max-time 10 https://github.com
+          echo "Testing Upterm..."
+          getent hosts upterm.dev || true
+          curl -I --max-time 10 https://upterm.dev || true
 
-          echo "=== Testing tmate.io ==="
-          curl -I --max-time 10 https://tmate.io
-
-          echo "=== Resolving tmate.io ==="
-          getent hosts tmate.io
-
-      - name: Start tmate
-        uses: mxschmitt/action-tmate@v3
+      - name: Start SSH Shell
+        uses: owenthereal/action-upterm@v1
         timeout-minutes: 300
