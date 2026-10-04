@@ -12,12 +12,28 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Test Upterm
+      - name: Install Upterm
         run: |
-          echo "Testing Upterm..."
-          getent hosts upterm.dev || true
-          curl -I --max-time 10 https://upterm.dev || true
+          curl -L https://github.com/owenthereal/upterm/releases/latest/download/upterm_linux_x86_64.tar.gz -o /tmp/upterm.tar.gz
+          tar -xzf /tmp/upterm.tar.gz -C /tmp
+          sudo install /tmp/upterm /usr/local/bin/upterm
+          upterm --version
 
-      - name: Start SSH Shell
-        uses: owenthereal/action-upterm@v1
-        timeout-minutes: 300
+      - name: Create SSH key
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keygen -t ed25519 -N "" -f ~/.ssh/upterm_key
+          chmod 600 ~/.ssh/upterm_key
+
+      - name: Start Upterm
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan uptermd.upterm.dev >> ~/.ssh/known_hosts
+
+          upterm host \
+            --accept \
+            --private-key ~/.ssh/upterm_key \
+            --skip-host-key-check \
+            --authorized-keys ~/.ssh/upterm_key.pub \
+            --join-timeout 300m \
+            -- bash
